@@ -2,7 +2,11 @@ from fastapi import FastAPI
 from app.core.supabase import supabase
 from app.schemas.inbox import InboxCreate
 from app.services.inbox_service import create_inbox
-# from app.agents.understanding_agent import understand
+# from app.agents.understanding_agent import understand_message
+
+from app.agents.understanding_agent import (
+    understand_message
+)
 
 app = FastAPI(
     title="Naam API"
@@ -31,10 +35,11 @@ def create_inbox_item(
     return create_inbox(
         payload.model_dump()
     )
+
 @app.get("/test-ai")
 def test_ai():
 
-    return understand(
+    return understand_message(
         "Call dance school tomorrow"
     )
 
