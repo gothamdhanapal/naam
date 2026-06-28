@@ -42,3 +42,6 @@ typing_extensions==4.15.0
 uvicorn==0.39.0
 websockets==15.0.1
 yarl==1.22.0
+pytest==8.4.2
+pytest-asyncio==1.2.0
+eval_type_backport==0.2.2
