@@ -1,6 +1,10 @@
 from pydantic import BaseModel
 from typing import Optional
 
+def understand_message(content: str):
+
+    print("CONTENT RECEIVED:")
+    print(content)
 
 class UnderstandingResult(BaseModel):
     type: str
@@ -47,6 +51,8 @@ Example:
         model="gpt-5",
         input=prompt
     )
+    print("GPT RESPONSE:")
+    print(response.output_text)
 
     result = json.loads(
         response.output_text
