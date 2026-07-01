@@ -1,13 +1,19 @@
-# Current Sprint
+# Current Milestone — Family Memory (M2)
 
-## Execution Engine
+See `docs/roadmap/M2_family_memory.md` for scope and acceptance criteria.
 
-- [ ] Planning Agent
+## Planned Work
 
-- [ ] Execution Engine
+- [ ] Knowledge domain model
+- [ ] Knowledge repository
+- [ ] Memory Agent
+- [ ] Context enrichment for Planning Agent
+- [ ] Inbox pipeline integration
+- [ ] Automated test suite
 
-- [ ] Task Repository
-
-- [ ] Automatic Task Creation
+## Future (Post-M2)
 
 - [ ] Event Creation
+- [ ] Routine Creation
+- [ ] Assignment Agent
+- [ ] Reminder Engine

@@ -2,12 +2,15 @@ from fastapi import FastAPI
 
 from app.agents.understanding_agent import understand_message
 from app.core.supabase import supabase
+from app.integrations.whatsapp.webhook import router as whatsapp_webhook_router
 from app.schemas.inbox import InboxCreate, InboxProcessResponse
 from app.services.inbox_service import create_inbox
 
 app = FastAPI(
     title="Naam API"
 )
+
+app.include_router(whatsapp_webhook_router)
 
 
 @app.get("/")

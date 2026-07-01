@@ -2,19 +2,19 @@
 
 ## Current Version
 
-v0.3.0
+v0.4.0
 
 ---
 
 # Current Phase
 
-Execution Phase
+Foundation Complete
 
 ---
 
-# Current Sprint
+# Current Milestone
 
-Sprint 1 – Execution Engine
+Family Memory
 
 ---
 
@@ -26,45 +26,15 @@ Sprint 1 – Execution Engine
 
 # Completed Milestones
 
-## Foundation
-
-- ✅ Git Repository
-- ✅ GitHub Setup
 - ✅ FastAPI Backend
 - ✅ Supabase Integration
-- ✅ OpenAI Integration
-- ✅ Environment Configuration
-- ✅ Swagger API
-- ✅ Local Development Environment
-
----
-
-## AI Foundation
-
-- ✅ Inbox API
 - ✅ Understanding Agent
-- ✅ Structured AI Output
-- ✅ AI Processing Pipeline
-- ✅ Inbox Processing Service
-- ✅ AI Output Persistence
-
----
-
-## Architecture Foundation
-
-- ✅ Product Vision
-- ✅ System Architecture
-- ✅ Agent Architecture
-- ✅ Domain Model
-- ✅ Execution Engine Design
-- ✅ Database Design
-- ✅ API Contracts
-- ✅ Backend Structure
-- ✅ Engineering Principles
-- ✅ MVP Roadmap
-- ✅ Family Operating Model
-- ✅ Naam Philosophy
-- ✅ Project Documentation
+- ✅ Execution Engine
+- ✅ Planning Agent
+- ✅ Repository Layer
+- ✅ Service Layer
+- ✅ End-to-End Inbox Processing
+- ✅ Automated Test Suite
 
 ---
 
@@ -78,37 +48,38 @@ Sprint 1 – Execution Engine
 
 ✅ Generate Structured AI Output
 
+✅ Plan Executable Actions
+
+✅ Execute Actions Deterministically
+
+✅ Create Tasks from Inbox Messages
+
 ✅ Persist AI Understanding
 
-✅ Process Inbox Automatically
+✅ Process Inbox End-to-End
+
+✅ Run Automated Tests Without External Services
 
 ---
 
 # Current Architecture
 
 ```text
-FastAPI
-
-↓
-
+Inbox
+    ↓
+Understanding Agent
+    ↓
+Planning Agent
+    ↓
+Execution Plan
+    ↓
+Execution Engine
+    ↓
 Services
-
-↓
-
-AI Agents
-
-↓
-
-Execution Engine (Next)
-
-↓
-
+    ↓
 Repositories
-
-↓
-
+    ↓
 Supabase
-
 ```
 
 ---
@@ -139,83 +110,35 @@ Version Control
 
 - Git + GitHub
 
+Testing
+
+- pytest
+
 Hosting (Planned)
 
 - Railway
 
 ---
 
-# Current Repository Structure
+# Next Milestone
 
-```text
-backend/
+Family Memory
 
-app/
-
-docs/
-
-README.md
-
-CHANGELOG.md
-
-DECISIONS.md
-
-TODO.md
-
-```
+See `docs/roadmap/M2_family_memory.md` for scope and acceptance criteria.
 
 ---
 
-# Current Focus
-
-Execution Engine
-
-Goal
-
-Convert AI understanding into deterministic application actions.
-
-The AI should propose **what** needs to happen.
-
-The Execution Engine should perform **how** it happens.
-
----
-
-# Immediate Next Milestones
-
-## Sprint 1
-
-- Planning Agent
-- Execution Engine
-- Task Repository
-- Automatic Task Creation
-
----
-
-## Sprint 2
+# Upcoming Milestones
 
 - Event Creation
 - Routine Creation
-- Knowledge Updates
-
----
-
-## Sprint 3
-
 - Assignment Agent
 - Reminder Engine
 - Daily Digest
-
----
-
-## Sprint 4
-
 - WhatsApp Integration
-
----
-
-## Sprint 5
-
 - Flutter Mobile Application
+
+See `docs/11_mvp_roadmap.md` for the complete roadmap.
 
 ---
 
@@ -256,21 +179,3 @@ None
 The project is currently in a healthy state.
 
 Priority is building new capabilities rather than refactoring.
-
----
-
-# Definition of Success for Current Sprint
-
-A user submits an inbox message.
-
-↓
-
-The Understanding Agent extracts structured meaning.
-
-↓
-
-The Planning Agent creates an execution plan.
-
-↓
-
-The Execution Engine performs the
