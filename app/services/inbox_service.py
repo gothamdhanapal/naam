@@ -3,6 +3,22 @@ from app.schemas.inbox import InboxProcessResponse
 from app.services.processing_service import process_inbox_item
 
 
+async def store_inbox(data: dict) -> dict:
+    """
+    Persist an inbox item without triggering AI processing.
+
+    Used by ingestion paths such as WhatsApp webhooks that store
+    messages for later processing.
+
+    Args:
+        data: Validated inbox creation payload.
+
+    Returns:
+        The persisted inbox item row.
+    """
+    return create_inbox_item(data)
+
+
 async def create_inbox(data: dict) -> InboxProcessResponse:
     """
     Persist an inbox item and run the full processing pipeline.

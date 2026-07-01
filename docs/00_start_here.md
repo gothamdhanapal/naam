@@ -8,7 +8,7 @@ Naam (நாம்) means **"We"** in Tamil.
 
 Naam is an AI-powered Family Chief of Staff designed to reduce the invisible mental load of running a family.
 
-The system transforms everyday information into organized actions, remembers important context, coordinates responsibilities, and continuously learns how a family operates.
+The system transforms everyday information into organized actions, remembers important context, plans actions, coordinates responsibilities, and continuously learns how a family operates.
 
 This document is the starting point for anyone contributing to the project.
 
@@ -18,21 +18,17 @@ This document is the starting point for anyone contributing to the project.
 
 Current Version
 
-v0.3.0
+v0.4.0
 
 Current Phase
 
-Execution Phase
+Foundation Complete
 
 Current Milestone
 
-Execution Engine & Automatic Task Creation
+Family Memory
 
-Project Status
-
-Architecture Complete
-
-Implementation In Progress
+See `docs/03_project_status.md` for the full status report.
 
 ---
 
@@ -80,33 +76,41 @@ Read them in sequence.
 
 13_naam_philosophy.md
 
+### Engineering Playbook
+
+docs/engineering/cursor_guidelines.md
+
+docs/engineering/coding_standards.md
+
+docs/engineering/review_checklist.md
+
+docs/engineering/milestone_template.md
+
 ---
 
 # Current Architecture
 
-FastAPI
-
-↓
-
-Services
-
-↓
-
-AI Agents
-
-↓
-
+```text
+Inbox
+    ↓
+Understanding Agent
+    ↓
+Planning Agent
+    ↓
+Execution Plan
+    ↓
 Execution Engine
-
-↓
-
+    ↓
+Services
+    ↓
 Repositories
-
-↓
-
+    ↓
 Supabase
+```
 
 OpenAI provides reasoning.
+
+The Planning Agent produces execution plans.
 
 The Execution Engine performs deterministic actions.
 
@@ -120,57 +124,33 @@ Repositories are the only layer allowed to access the database.
 
 ✅ Supabase Integration
 
-✅ Git Repository
-
 ✅ Inbox API
 
 ✅ OpenAI Integration
 
 ✅ Understanding Agent
 
-✅ AI Output Persistence
+✅ Planning Agent
+
+✅ Execution Engine
+
+✅ Task Creation
+
+✅ End-to-End Inbox Processing
+
+✅ Automated Test Suite
 
 ✅ Project Documentation
 
 ---
 
-# Immediate Next Goal
+# Current Milestone
 
-Build the Execution Engine.
+**Family Memory (M2)**
 
-The Execution Engine converts AI decisions into deterministic application actions.
+Goal: Build Naam's long-term knowledge layer so context learned from one message is available for future planning and coordination.
 
-Example
-
-Inbox Message
-
-↓
-
-Understanding Agent
-
-↓
-
-Planning Agent
-
-↓
-
-Execution Plan
-
-↓
-
-Execution Engine
-
-↓
-
-Create Task
-
-↓
-
-Assign Owner
-
-↓
-
-Store Results
+See `docs/roadmap/M2_family_memory.md` for scope and acceptance criteria.
 
 ---
 
@@ -181,7 +161,7 @@ Every feature follows the same lifecycle.
 1. Design
 2. Implement
 3. Test
-4. Review
+4. Review (use `docs/engineering/review_checklist.md`)
 5. Commit
 6. Update Documentation
 7. Update Project Status
@@ -194,21 +174,27 @@ Repeat.
 
 backend/
 
+app/
+
 docs/
 
-prompts/
+docs/engineering/
+
+docs/roadmap/
 
 tests/
 
-scripts/
+requirements.txt
 
-README.md
+main.py
 
-CHANGELOG.md
+changelog.md
 
-DECISIONS.md
+decisions.md
 
-TODO.md
+todo.md
+
+readme.md (project root)
 
 ---
 
@@ -223,6 +209,8 @@ TODO.md
 - Simplicity is preferred over cleverness.
 - Every architectural decision should scale.
 
+See `docs/engineering/cursor_guidelines.md` for permanent AI assistant instructions.
+
 ---
 
 # Before Starting Any New Feature
@@ -230,6 +218,8 @@ TODO.md
 Understand the user problem.
 
 Review the relevant architecture document.
+
+Read `docs/engineering/cursor_guidelines.md`.
 
 Design before coding.
 
@@ -241,7 +231,7 @@ Test independently.
 
 Commit meaningful milestones.
 
-Update PROJECT_STATUS.md.
+Update `docs/03_project_status.md`.
 
 ---
 
@@ -253,29 +243,15 @@ Rather than acting as another application, Naam quietly understands, remembers, 
 
 ---
 
-# Current Sprint
-
-Execution Engine
-
-Primary Deliverables
-
-- Planning Agent
-- Execution Engine
-- Automatic Task Creation
-- Event Creation
-- Routine Generation
-
----
-
 # First Prompt for Every New Chat
 
 "I'm continuing development of Naam.
 
-Read `docs/00_start_here.md` and use it as the entry point.
+Read `docs/00_start_here.md` and `docs/engineering/cursor_guidelines.md`.
 
-Assume all referenced documentation is available.
+Check `docs/03_project_status.md` for the current milestone.
 
-We are currently working on the Execution Engine milestone.
+We are currently working on the Family Memory milestone.
 
 Help me design, review and implement the next feature while keeping the architecture consistent."
 
@@ -283,5 +259,5 @@ Help me design, review and implement the next feature while keeping the architec
 
 Last Updated
 
-Architecture Foundation Complete  
-Execution Phase Started
+v0.4.0 — Execution Engine Foundation complete  
+Family Memory milestone in progress
