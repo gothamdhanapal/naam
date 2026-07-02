@@ -21,6 +21,7 @@ class InboxProcessResponse(BaseModel):
     """Response returned after inbox submission and processing."""
 
     inbox_item: dict[str, Any]
-    understanding: dict[str, Any]
-    execution_plan: dict[str, Any]
+    understanding: dict[str, Any] = Field(default_factory=dict)
+    execution_plan: dict[str, Any] = Field(default_factory=dict)
     execution_results: list[dict[str, Any]] = Field(default_factory=list)
+    processing_error: str | None = None

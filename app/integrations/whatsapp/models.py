@@ -119,3 +119,7 @@ class WhatsAppIngestionResult(BaseModel):
 
     message_id: str
     inbox_item: dict[str, Any]
+    understanding: dict[str, Any] = Field(default_factory=dict)
+    execution_plan: dict[str, Any] = Field(default_factory=dict)
+    execution_results: list[dict[str, Any]] = Field(default_factory=list)
+    processing_error: str | None = None

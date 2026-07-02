@@ -28,42 +28,50 @@ Completed
 
 ---
 
-# Phase 2 — Action Engine
+# Phase 2 — Action Engine ✅
 
 - Execution Engine
 - Task Creation
-- Event Creation
-- Routine Creation
+- End-to-End Inbox Processing
+- Automatic Task Creation from WhatsApp
 
 Status
 
-In Progress
+Completed (v0.4.0–v0.5.0)
+
+Remaining
+
+- Event Creation
+- Routine Creation
 
 ---
 
 # Phase 3 — Family Intelligence
 
+- Identity Agent ✅
+- Context Models ✅
+- Context Agent
+- Planning Agent v2
 - Assignment Agent
 - Reminder Agent
 - Daily Digest
-- Knowledge Graph
-- Family Context
+- Knowledge Graph (Family Memory)
 
 Status
 
-Planned
+In Progress (M4)
 
 ---
 
 # Phase 4 — Communication
 
-- WhatsApp Integration
+- WhatsApp Integration ✅
 - Email Integration
 - Calendar Integration
 
 Status
 
-Planned
+Partially Complete
 
 ---
 

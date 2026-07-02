@@ -1,19 +1,25 @@
-# Current Milestone — Family Memory (M2)
+# Current Milestone — M4 Identity & Context Engine
 
-See `docs/roadmap/M2_family_memory.md` for scope and acceptance criteria.
+See `docs/16_current_focus.md` for session handover and `docs/03_project_status.md` for full status.
 
-## Planned Work
+## M4 Remaining Work
 
-- [ ] Knowledge domain model
-- [ ] Knowledge repository
-- [ ] Memory Agent
-- [ ] Context enrichment for Planning Agent
-- [ ] Inbox pipeline integration
-- [ ] Automated test suite
+- [ ] PR3 — Context Decision Matrix (deterministic rules for scope, visibility, ownership)
+- [ ] PR4 — Context Agent (produce `ContextResult` from identity + understanding)
+- [ ] PR5 — Planning Agent v2 (consume context in planning)
+- [ ] Wire Identity Agent into inbox processing pipeline
+- [ ] Remove temporary task-creation debug logging after pipeline stabilizes
 
-## Future (Post-M2)
+## Completed (M4)
 
+- [x] PR1 — Identity Agent
+- [x] PR2 — Context Models
+
+## Post-M4
+
+- [ ] Family Memory (M2)
 - [ ] Event Creation
 - [ ] Routine Creation
 - [ ] Assignment Agent
 - [ ] Reminder Engine
+- [ ] Daily Digest

@@ -7,6 +7,7 @@ without bypassing any layer or accessing Supabase directly.
 
 from __future__ import annotations
 
+import logging
 from datetime import date
 from typing import Any
 
@@ -15,6 +16,8 @@ from app.agents.understanding_agent import understand_message
 from app.execution.bootstrap import create_execution_engine
 from app.execution.models import ActionResult
 from app.repositories.inbox_repository import update_ai_result
+
+logger = logging.getLogger(__name__)
 
 
 def _enrich_for_planning(
@@ -88,9 +91,18 @@ async def process_inbox_item(
     )
 
     planning_agent = PlanningAgent()
+    logger.debug("[DEBUG task-creation] before PlanningAgent.plan input=%s", planning_input)
     execution_plan = await planning_agent.plan(planning_input)
+    logger.debug(
+        "[DEBUG task-creation] after PlanningAgent.plan plan=%s",
+        execution_plan.model_dump(mode="json"),
+    )
 
     engine = create_execution_engine()
+    logger.debug(
+        "[DEBUG task-creation] before ExecutionEngine.execute action_count=%s",
+        len(execution_plan.actions),
+    )
     execution_results = await engine.execute(execution_plan)
 
     update_ai_result(inbox_id, understanding)

@@ -2,25 +2,35 @@
 
 ## Current Version
 
-v0.4.0
+v0.5.0
 
 ---
 
 # Current Phase
 
-Foundation Complete
+First Intelligent Conversation Complete
 
 ---
 
 # Current Milestone
 
-Family Memory
+M4 — Identity & Context Engine
 
 ---
 
 # Project Health
 
 🟢 On Track
+
+---
+
+# M4 Progress
+
+- ✅ PR1 — Identity Agent
+- ✅ PR2 — Context Models
+- ⏳ PR3 — Context Decision Matrix
+- ⏳ PR4 — Context Agent
+- ⏳ PR5 — Planning Agent v2
 
 ---
 
@@ -34,53 +44,91 @@ Family Memory
 - ✅ Repository Layer
 - ✅ Service Layer
 - ✅ End-to-End Inbox Processing
+- ✅ WhatsApp Integration
+- ✅ Meta Webhook Integration
+- ✅ Automatic Inbox Ingestion
+- ✅ Automatic Task Creation from WhatsApp
+- ✅ Identity Agent (M4 PR1)
+- ✅ Context Models (M4 PR2)
 - ✅ Automated Test Suite
 
 ---
 
 # Current Capabilities
 
-✅ Receive Inbox Messages
+✅ Receive WhatsApp messages via Meta webhook
 
-✅ Store Inbox Items
+✅ Ingest messages into Inbox automatically
 
-✅ Understand Messages using GPT
+✅ Resolve inbox lifecycle (RECEIVED → PROCESSING → PROCESSED / FAILED)
 
-✅ Generate Structured AI Output
+✅ Understand messages using GPT
 
-✅ Plan Executable Actions
+✅ Plan executable actions deterministically
 
-✅ Execute Actions Deterministically
+✅ Create tasks in Supabase from WhatsApp conversations
 
-✅ Create Tasks from Inbox Messages
+✅ Persist AI understanding on inbox items
 
-✅ Persist AI Understanding
+✅ Resolve sender identity deterministically (Identity Agent — not yet wired to pipeline)
 
-✅ Process Inbox End-to-End
+✅ Context domain models defined (Context Agent — not yet implemented)
 
-✅ Run Automated Tests Without External Services
+✅ Run automated tests without external services
 
 ---
 
 # Current Architecture
 
+## Shipped Pipeline (v0.5.0)
+
+The first end-to-end intelligent conversation is working:
+
 ```text
-Inbox
+WhatsApp Message
+    ↓
+Meta Webhook
+    ↓
+WhatsAppService
+    ↓
+InboxService.ingest_inbox()
     ↓
 Understanding Agent
     ↓
 Planning Agent
     ↓
-Execution Plan
+Execution Engine
+    ↓
+TaskService → TaskRepository
+    ↓
+Supabase (tasks)
+```
+
+Example: *"Pay electricity bill tomorrow"* → task created automatically.
+
+## Target Architecture (M4)
+
+Naam is an AI Chief of Staff for families. Intelligence comes before automation. Deterministic rules resolve identity and context before AI inference drives planning.
+
+```text
+WhatsApp / Inbox
+    ↓
+Intake
+    ↓
+Identity Agent          ← PR1 complete (not wired)
+    ↓
+Understanding Agent
+    ↓
+Context Agent           ← PR2 models complete; PR4 pending
+    ↓
+Planning Agent v2       ← PR5 pending
     ↓
 Execution Engine
     ↓
-Services
-    ↓
-Repositories
-    ↓
 Supabase
 ```
+
+See `docs/04_agent_architecture.md` and `docs/14_naam_intelligence_model.md`.
 
 ---
 
@@ -102,6 +150,10 @@ AI
 
 - OpenAI Responses API
 
+Integrations
+
+- WhatsApp Cloud API (Meta webhook)
+
 Language
 
 - Python
@@ -112,7 +164,7 @@ Version Control
 
 Testing
 
-- pytest
+- pytest (59 automated tests)
 
 Hosting (Planned)
 
@@ -120,22 +172,25 @@ Hosting (Planned)
 
 ---
 
-# Next Milestone
+# Next Steps (M4)
 
-Family Memory
+1. PR3 — Context Decision Matrix (deterministic scope, visibility, ownership rules)
+2. PR4 — Context Agent (produce `ContextResult` from identity + understanding)
+3. PR5 — Planning Agent v2 (consume context in planning decisions)
+4. Wire Identity Agent into the inbox pipeline
 
-See `docs/roadmap/M2_family_memory.md` for scope and acceptance criteria.
+See `docs/16_current_focus.md` for session handover details.
 
 ---
 
-# Upcoming Milestones
+# Upcoming Milestones (Post-M4)
 
+- Family Memory (M2)
 - Event Creation
 - Routine Creation
 - Assignment Agent
 - Reminder Engine
 - Daily Digest
-- WhatsApp Integration
 - Flutter Mobile Application
 
 See `docs/11_mvp_roadmap.md` for the complete roadmap.
@@ -174,8 +229,18 @@ Project Status Update
 
 # Known Technical Debt
 
-None
+- Temporary debug logging in task-creation path (remove after M4 stabilizes)
+- Identity Agent and Context Agent not yet wired into processing pipeline
+- `docs/05_domain_model.md` inbox lifecycle prose predates M3 enum values
 
-The project is currently in a healthy state.
+Priority is completing M4 before expanding scope.
 
-Priority is building new capabilities rather than refactoring.
+---
+
+# Session Handover
+
+Every new development session should start with:
+
+- `docs/00_start_here.md`
+- `docs/16_current_focus.md`
+- `docs/engineering/cursor_guidelines.md`

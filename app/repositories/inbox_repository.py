@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
-from typing import Any
+from typing import Any, Optional
 
 from app.core.supabase import supabase
+from app.models.inbox import InboxStatus
 
 
 def create(data: dict[str, Any]) -> dict[str, Any]:
@@ -30,6 +31,55 @@ def create(data: dict[str, Any]) -> dict[str, Any]:
     return response.data[0]
 
 
+def get_by_id(inbox_id: str) -> Optional[dict[str, Any]]:
+    """
+    Fetch a single inbox item by id.
+
+    Args:
+        inbox_id: Primary key of the inbox item.
+
+    Returns:
+        The inbox item row if found, otherwise None.
+    """
+    response = (
+        supabase
+        .table("inbox_items")
+        .select("*")
+        .eq("id", inbox_id)
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
+
+def update_status(inbox_id: str, status: InboxStatus) -> Optional[dict[str, Any]]:
+    """
+    Update the lifecycle status of an inbox item.
+
+    Args:
+        inbox_id: Primary key of the inbox item.
+        status: New lifecycle status.
+
+    Returns:
+        The updated inbox item row if found, otherwise None.
+    """
+    response = (
+        supabase
+        .table("inbox_items")
+        .update({"status": status.value})
+        .eq("id", inbox_id)
+        .execute()
+    )
+
+    if not response.data:
+        return None
+
+    return response.data[0]
+
+
 def update_ai_result(
     inbox_id: str,
     ai_result: dict[str, Any],
@@ -50,7 +100,7 @@ def update_ai_result(
         .update(
             {
                 "ai_output": ai_result,
-                "status": "PROCESSED",
+                "status": InboxStatus.PROCESSED.value,
                 "processed_at": datetime.now(timezone.utc).isoformat(),
             }
         )

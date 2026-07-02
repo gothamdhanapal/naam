@@ -134,6 +134,7 @@ Verify the following before marking work complete:
 | `docs/engineering/coding_standards.md` | Detailed engineering standards |
 | `docs/engineering/review_checklist.md` | Pre-merge review checklist |
 | `docs/engineering/milestone_template.md` | Template for future milestones |
+| `docs/16_current_focus.md` | Session handover — start every new chat here |
 | `docs/00_start_here.md` | Project entry point |
 | `docs/03_project_status.md` | Current version and milestone status |
 | `docs/roadmap/` | Milestone specifications |
@@ -144,11 +145,14 @@ Verify the following before marking work complete:
 
 When starting a new chat:
 
-1. Read `docs/00_start_here.md` as the entry point.
-2. Read `docs/engineering/cursor_guidelines.md` (this document).
-3. Check `docs/03_project_status.md` for the current milestone.
-4. Follow the architecture rules without being re-told.
+1. Read `docs/16_current_focus.md` for session handover.
+2. Read `docs/00_start_here.md` as the entry point.
+3. Read `docs/engineering/cursor_guidelines.md` (this document).
+4. Check `docs/03_project_status.md` for the current milestone.
+5. Follow the architecture rules without being re-told.
 
-Current milestone: **Family Memory** (M2).
+Current version: **v0.5.0** — First Intelligent Conversation.
 
-See `docs/roadmap/M2_family_memory.md` for scope.
+Current milestone: **M4 — Identity & Context Engine**.
+
+See `docs/16_current_focus.md` and `todo.md` for remaining PRs.
