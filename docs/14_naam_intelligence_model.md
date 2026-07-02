@@ -222,6 +222,36 @@ Context answers
 
 ---
 
+## Policy Layer
+
+After Understanding produces structured meaning, the Policy Layer deterministically decides how that meaning should be organized for the family.
+
+Understanding explains what was said.
+
+The Policy Layer decides
+
+- Scope
+
+- Ownership
+
+- Participants
+
+- Visibility
+
+- Follow-up strategy
+
+Planning never decides these.
+
+AI understands.
+
+Policies organize.
+
+Planning executes decisions.
+
+The Context Decision Matrix composes independent policies — each responsible for one dimension — into a single deterministic decision. The Context Agent consumes that decision and produces ContextResult for downstream planning.
+
+---
+
 ## 5. Commitment
 
 A Commitment is a promise that should not be forgotten.

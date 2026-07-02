@@ -27,10 +27,21 @@ class Scope(str, Enum):
 class Visibility(str, Enum):
     """Who may see or act on information derived from the conversation."""
 
+    OWNER_ONLY = "OWNER_ONLY"
     PRIVATE = "PRIVATE"
     FAMILY = "FAMILY"
     CAREGIVERS = "CAREGIVERS"
     EXTERNAL = "EXTERNAL"
+
+
+class FollowUpAction(str, Enum):
+    """Recommended follow-up behaviour for a conversation."""
+
+    NONE = "NONE"
+    REMIND_OWNER = "REMIND_OWNER"
+    WAIT_RESPONSE = "WAIT_RESPONSE"
+    WATCH = "WATCH"
+    ESCALATE = "ESCALATE"
 
 
 class Relationship(str, Enum):

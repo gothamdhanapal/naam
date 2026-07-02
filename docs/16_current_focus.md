@@ -24,9 +24,27 @@ It is not a task manager, calendar, or chatbot. Naam is a conversation-first ope
 |---|---|---|
 | PR1 | ✅ Complete | Identity Agent — resolve sender from `family_members` |
 | PR2 | ✅ Complete | Context Models — `ContextResult`, enums, participants |
-| PR3 | ⏳ Next | Context Decision Matrix — deterministic scope/visibility rules |
-| PR4 | ⏳ Pending | Context Agent — produce `ContextResult` |
+| PR3 | ✅ Complete | Context Decision Matrix — deterministic scope/visibility rules |
+| PR4 | ⏳ Next | Context Agent — produce `ContextResult` |
 | PR5 | ⏳ Pending | Planning Agent v2 — consume context |
+
+---
+
+## Current Objective
+
+**PR4 — Context Agent**
+
+The Context Agent should consume
+
+- `IdentityResult`
+- Understanding output
+- `ContextDecisionMatrix`
+
+and produce
+
+- `ContextResult`
+
+without performing any persistence.
 
 ---
 
@@ -46,9 +64,9 @@ Completed foundation:
 - Planning Agent → Execution Engine → Task creation
 - WhatsApp / Meta webhook integration
 - Identity Agent (standalone, not wired)
-- Context schemas (agent not built)
+- Context schemas and Context Decision Matrix (agent not built)
 
-**59 automated tests passing.**
+**91 automated tests passing.**
 
 ---
 
@@ -84,22 +102,17 @@ API → Services → Agents → Planning → Execution → Repositories → Supa
 
 ## Next Implementation Steps
 
-1. **PR3 — Context Decision Matrix**
-   - Pure functions / rule table mapping understanding + identity → scope, visibility, owner
-   - No OpenAI; deterministic only
-   - Unit tests for every rule path
-
-2. **PR4 — Context Agent**
-   - Input: `IdentityResult`, understanding dict, family context
+1. **PR4 — Context Agent**
+   - Input: `IdentityResult`, understanding output, `ContextDecisionMatrix`
    - Output: `ContextResult`
-   - Uses decision matrix; no database writes
+   - Map matrix decisions to domain schema; no database writes
 
-3. **PR5 — Planning Agent v2**
+2. **PR5 — Planning Agent v2**
    - Accept optional `ContextResult`
    - Enrich task payloads with owner, scope, participants
    - Do not redesign Execution Engine
 
-4. **Pipeline wiring**
+3. **Pipeline wiring**
    - Call `IdentityAgent` from processing path (after ingest, before understanding)
    - Call `ContextAgent` after understanding, before planning
    - Update tests; keep webhook resilience (persistence first, no HTTP 500 on AI failure)

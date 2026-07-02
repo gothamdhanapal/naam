@@ -220,8 +220,10 @@ Schema
 
 Design
 
-- Structured output only in this milestone
-- Agent implementation follows in a later PR
+- Context Decision Matrix implemented in `app/context/` (M4 PR3)
+- Matrix composes Scope, Ownership, Participant, Visibility, and FollowUp policies
+- Deterministic rules only — no OpenAI, no database access
+- Context Agent (PR4) will call the matrix and map output to `ContextResult`
 
 ---
 
