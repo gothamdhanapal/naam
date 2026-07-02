@@ -18,6 +18,10 @@ from app.schemas.context import Scope, Visibility
 class VisibilityPolicy:
     """Determine visibility for derived context."""
 
+    REASON_SENSITIVE_PRIVATE = "VISIBILITY_SENSITIVE_PRIVATE"
+    REASON_OWNER_ONLY = "VISIBILITY_OWNER_ONLY"
+    REASON_FAMILY = "VISIBILITY_FAMILY"
+
     _PRIVATE_ENTITY_MARKERS = (
         "health",
         "medical",
@@ -42,12 +46,21 @@ class VisibilityPolicy:
             - Family, dependent, external shared work -> FAMILY visibility
         """
         if self._is_sensitive_personal_content(decision_input):
-            return VisibilityDecision(visibility=Visibility.PRIVATE)
+            return VisibilityDecision(
+                visibility=Visibility.PRIVATE,
+                reason_code=self.REASON_SENSITIVE_PRIVATE,
+            )
 
         if scope_decision.scope == Scope.PERSONAL:
-            return VisibilityDecision(visibility=Visibility.OWNER_ONLY)
+            return VisibilityDecision(
+                visibility=Visibility.OWNER_ONLY,
+                reason_code=self.REASON_OWNER_ONLY,
+            )
 
-        return VisibilityDecision(visibility=Visibility.FAMILY)
+        return VisibilityDecision(
+            visibility=Visibility.FAMILY,
+            reason_code=self.REASON_FAMILY,
+        )
 
     def _is_sensitive_personal_content(self, decision_input: DecisionInput) -> bool:
         understanding = decision_input.understanding

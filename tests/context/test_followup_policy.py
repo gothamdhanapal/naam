@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from app.context.models import OwnershipDecision, ScopeDecision, UnderstandingContext
+from app.context.models import UnderstandingContext
 from app.context.policies.followup_policy import FollowUpPolicy
 from app.schemas.context import FollowUpAction, Scope
-from tests.context.conftest import MEMBER_ID, build_input
+from tests.context.conftest import MEMBER_ID, build_input, ownership_decision, scope_decision
 
 
 def test_personal_reminder_requests_owner_reminder(speaker) -> None:
@@ -21,11 +21,12 @@ def test_personal_reminder_requests_owner_reminder(speaker) -> None:
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.PERSONAL, confidence=0.9),
-        OwnershipDecision(owner_id=MEMBER_ID, responsible_person_id=MEMBER_ID, confidence=0.9),
+        scope_decision(Scope.PERSONAL, confidence=0.9),
+        ownership_decision(owner_id=MEMBER_ID, responsible_person_id=MEMBER_ID, confidence=0.9),
     )
 
     assert result.action == FollowUpAction.REMIND_OWNER
+    assert result.reason_code == FollowUpPolicy.REASON_REMIND_OWNER
 
 
 def test_question_triggers_wait_response(speaker) -> None:
@@ -41,11 +42,12 @@ def test_question_triggers_wait_response(speaker) -> None:
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.FAMILY, confidence=0.8),
-        OwnershipDecision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.8),
+        scope_decision(Scope.FAMILY, confidence=0.8),
+        ownership_decision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.8),
     )
 
     assert result.action == FollowUpAction.WAIT_RESPONSE
+    assert result.reason_code == FollowUpPolicy.REASON_WAIT_RESPONSE
 
 
 def test_external_scope_is_watched(speaker) -> None:
@@ -61,11 +63,12 @@ def test_external_scope_is_watched(speaker) -> None:
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.EXTERNAL, confidence=0.9),
-        OwnershipDecision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.75),
+        scope_decision(Scope.EXTERNAL, confidence=0.9),
+        ownership_decision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.75),
     )
 
     assert result.action == FollowUpAction.WATCH
+    assert result.reason_code == FollowUpPolicy.REASON_WATCH
 
 
 def test_urgent_language_escalates(speaker) -> None:
@@ -80,8 +83,9 @@ def test_urgent_language_escalates(speaker) -> None:
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.FAMILY, confidence=0.8),
-        OwnershipDecision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.8),
+        scope_decision(Scope.FAMILY, confidence=0.8),
+        ownership_decision(owner_id=None, responsible_person_id=MEMBER_ID, confidence=0.8),
     )
 
     assert result.action == FollowUpAction.ESCALATE
+    assert result.reason_code == FollowUpPolicy.REASON_ESCALATION

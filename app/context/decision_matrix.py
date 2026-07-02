@@ -20,8 +20,8 @@ class ContextDecisionMatrix:
     Deterministic reasoning engine for context decisions.
 
     Composes scope, ownership, participant, visibility, and follow-up
-    policies. The future Context Agent will call this matrix and map
-    the result into a ContextResult.
+    policies. The Context Agent calls this matrix and maps the result
+    into a ContextResult.
     """
 
     def __init__(
@@ -56,7 +56,7 @@ class ContextDecisionMatrix:
             decision_input: Speaker identity, understanding, and family refs.
 
         Returns:
-            Full deterministic context decision.
+            Full deterministic context decision with reason codes.
         """
         scope_decision = self._scope_policy.evaluate(decision_input)
         ownership_decision = self._ownership_policy.evaluate(
@@ -79,10 +79,19 @@ class ContextDecisionMatrix:
             ownership_decision,
         )
 
+        reason_codes = [
+            scope_decision.reason_code,
+            ownership_decision.reason_code,
+            participant_decision.reason_code,
+            visibility_decision.reason_code,
+            follow_up_decision.reason_code,
+        ]
+
         return ContextDecision(
             scope=scope_decision,
             ownership=ownership_decision,
             participants=participant_decision,
             visibility=visibility_decision,
             follow_up=follow_up_decision,
+            reason_codes=reason_codes,
         )

@@ -21,6 +21,10 @@ from app.schemas.context import ContextParticipant, Relationship, Scope
 class ParticipantPolicy:
     """Determine participants and interested members."""
 
+    REASON_DEPENDENT_CAREGIVER = "PARTICIPANTS_DEPENDENT_CAREGIVER"
+    REASON_SHARED_INTEREST = "PARTICIPANTS_SHARED_INTEREST"
+    REASON_ASSIGNED = "PARTICIPANTS_ASSIGNED"
+
     _PARENT_ROLES = frozenset({"parent", "guardian", "caregiver"})
     _RELATIONSHIP_PRIORITY = {
         Relationship.OWNER: 4,
@@ -65,7 +69,8 @@ class ParticipantPolicy:
             Relationship.PARTICIPANT,
         )
 
-        if scope_decision.scope == Scope.DEPENDENT:
+        is_dependent_scope = scope_decision.scope == Scope.DEPENDENT
+        if is_dependent_scope:
             self._register(
                 relationships,
                 decision_input.speaker.family_member_id,
@@ -87,9 +92,17 @@ class ParticipantPolicy:
                 participant_ids=set(relationships.keys()),
             )
 
+        if is_dependent_scope:
+            reason_code = self.REASON_DEPENDENT_CAREGIVER
+        elif interested_member_ids:
+            reason_code = self.REASON_SHARED_INTEREST
+        else:
+            reason_code = self.REASON_ASSIGNED
+
         return ParticipantDecision(
             participants=participants,
             interested_member_ids=interested_member_ids,
+            reason_code=reason_code,
         )
 
     def _register(

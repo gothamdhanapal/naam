@@ -24,6 +24,13 @@ def _entities_contain_markers(entities: list[str], markers: tuple[str, ...]) -> 
 class ScopePolicy:
     """Determine conversation scope from identity and understanding."""
 
+    REASON_EXPLICIT_HINT = "SCOPE_EXPLICIT_HINT"
+    REASON_DEPENDENT_SIGNAL = "SCOPE_DEPENDENT_SIGNAL"
+    REASON_EXTERNAL_ENTITY = "SCOPE_EXTERNAL_ENTITY"
+    REASON_PERSONAL_LANGUAGE = "SCOPE_PERSONAL_LANGUAGE"
+    REASON_FAMILY_DEFAULT = "SCOPE_FAMILY_DEFAULT"
+    REASON_FAMILY_FALLBACK = "SCOPE_FAMILY_FALLBACK"
+
     _PERSONAL_TITLE_MARKERS = (
         "remind me",
         "my ",
@@ -69,24 +76,45 @@ class ScopePolicy:
             return ScopeDecision(
                 scope=understanding.scope_hint,
                 confidence=1.0,
+                reason_code=self.REASON_EXPLICIT_HINT,
             )
 
         if self._has_dependent_signal(understanding):
-            return ScopeDecision(scope=Scope.DEPENDENT, confidence=0.9)
+            return ScopeDecision(
+                scope=Scope.DEPENDENT,
+                confidence=0.9,
+                reason_code=self.REASON_DEPENDENT_SIGNAL,
+            )
 
         if _entities_contain_markers(
             understanding.entities,
             self._EXTERNAL_ENTITY_MARKERS,
         ):
-            return ScopeDecision(scope=Scope.EXTERNAL, confidence=0.9)
+            return ScopeDecision(
+                scope=Scope.EXTERNAL,
+                confidence=0.9,
+                reason_code=self.REASON_EXTERNAL_ENTITY,
+            )
 
         if self._is_personal_conversation(understanding):
-            return ScopeDecision(scope=Scope.PERSONAL, confidence=0.85)
+            return ScopeDecision(
+                scope=Scope.PERSONAL,
+                confidence=0.85,
+                reason_code=self.REASON_PERSONAL_LANGUAGE,
+            )
 
         if understanding.type.strip().upper() in self._ACTIONABLE_TYPES:
-            return ScopeDecision(scope=Scope.FAMILY, confidence=0.8)
+            return ScopeDecision(
+                scope=Scope.FAMILY,
+                confidence=0.8,
+                reason_code=self.REASON_FAMILY_DEFAULT,
+            )
 
-        return ScopeDecision(scope=Scope.FAMILY, confidence=0.7)
+        return ScopeDecision(
+            scope=Scope.FAMILY,
+            confidence=0.7,
+            reason_code=self.REASON_FAMILY_FALLBACK,
+        )
 
     def _has_dependent_signal(self, understanding: UnderstandingContext) -> bool:
         if understanding.about_member_id is not None:

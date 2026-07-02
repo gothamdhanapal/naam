@@ -18,6 +18,12 @@ from app.schemas.context import FollowUpAction, Scope
 class FollowUpPolicy:
     """Determine recommended follow-up behaviour."""
 
+    REASON_ESCALATION = "FOLLOW_UP_ESCALATION"
+    REASON_WAIT_RESPONSE = "FOLLOW_UP_WAIT_RESPONSE"
+    REASON_REMIND_OWNER = "FOLLOW_UP_REMIND_OWNER"
+    REASON_WATCH = "FOLLOW_UP_WATCH"
+    REASON_NONE = "FOLLOW_UP_NONE"
+
     _ESCALATION_MARKERS = ("urgent", "asap", "overdue", "immediately")
     _QUESTION_MARKERS = ("?", "should we", "can you", "what do you think")
 
@@ -41,10 +47,18 @@ class FollowUpPolicy:
         title = understanding.title.strip().lower()
 
         if any(marker in title for marker in self._ESCALATION_MARKERS):
-            return FollowUpDecision(action=FollowUpAction.ESCALATE, confidence=0.95)
+            return FollowUpDecision(
+                action=FollowUpAction.ESCALATE,
+                confidence=0.95,
+                reason_code=self.REASON_ESCALATION,
+            )
 
         if self._looks_like_question(title) or understanding.confidence < 0.6:
-            return FollowUpDecision(action=FollowUpAction.WAIT_RESPONSE, confidence=0.85)
+            return FollowUpDecision(
+                action=FollowUpAction.WAIT_RESPONSE,
+                confidence=0.85,
+                reason_code=self.REASON_WAIT_RESPONSE,
+            )
 
         if (
             scope_decision.scope == Scope.PERSONAL
@@ -53,12 +67,24 @@ class FollowUpPolicy:
                 or "remind" in title
             )
         ):
-            return FollowUpDecision(action=FollowUpAction.REMIND_OWNER, confidence=0.9)
+            return FollowUpDecision(
+                action=FollowUpAction.REMIND_OWNER,
+                confidence=0.9,
+                reason_code=self.REASON_REMIND_OWNER,
+            )
 
         if scope_decision.scope == Scope.EXTERNAL:
-            return FollowUpDecision(action=FollowUpAction.WATCH, confidence=0.8)
+            return FollowUpDecision(
+                action=FollowUpAction.WATCH,
+                confidence=0.8,
+                reason_code=self.REASON_WATCH,
+            )
 
-        return FollowUpDecision(action=FollowUpAction.NONE, confidence=0.75)
+        return FollowUpDecision(
+            action=FollowUpAction.NONE,
+            confidence=0.75,
+            reason_code=self.REASON_NONE,
+        )
 
     def _looks_like_question(self, title: str) -> bool:
         if title.endswith("?"):

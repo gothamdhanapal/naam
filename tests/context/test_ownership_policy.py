@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
-from app.context.models import ScopeDecision, UnderstandingContext
+from app.context.models import UnderstandingContext
 from app.context.policies.ownership_policy import OwnershipPolicy
 from app.schemas.context import Scope
-from tests.context.conftest import CHILD_MEMBER_ID, MEMBER_ID, OTHER_MEMBER_ID, build_input
+from tests.context.conftest import (
+    CHILD_MEMBER_ID,
+    MEMBER_ID,
+    OTHER_MEMBER_ID,
+    build_input,
+    scope_decision,
+)
 
 
 def test_explicit_ownership_uses_provided_ids(speaker) -> None:
@@ -20,11 +26,15 @@ def test_explicit_ownership_uses_provided_ids(speaker) -> None:
         ),
     )
 
-    result = policy.evaluate(decision_input, ScopeDecision(scope=Scope.FAMILY, confidence=1.0))
+    result = policy.evaluate(
+        decision_input,
+        scope_decision(Scope.FAMILY, confidence=1.0),
+    )
 
     assert result.owner_id == OTHER_MEMBER_ID
     assert result.responsible_person_id == MEMBER_ID
     assert result.confidence == 1.0
+    assert result.reason_code == OwnershipPolicy.REASON_EXPLICIT
 
 
 def test_explicit_owner_does_not_infer_responsible_from_speaker(speaker) -> None:
@@ -38,7 +48,10 @@ def test_explicit_owner_does_not_infer_responsible_from_speaker(speaker) -> None
         ),
     )
 
-    result = policy.evaluate(decision_input, ScopeDecision(scope=Scope.FAMILY, confidence=1.0))
+    result = policy.evaluate(
+        decision_input,
+        scope_decision(Scope.FAMILY, confidence=1.0),
+    )
 
     assert result.owner_id == OTHER_MEMBER_ID
     assert result.responsible_person_id is None
@@ -57,11 +70,12 @@ def test_personal_scope_owner_and_responsible_are_the_speaker(speaker) -> None:
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.PERSONAL, confidence=0.9),
+        scope_decision(Scope.PERSONAL, confidence=0.9),
     )
 
     assert result.owner_id == MEMBER_ID
     assert result.responsible_person_id == MEMBER_ID
+    assert result.reason_code == OwnershipPolicy.REASON_PERSONAL_SPEAKER
 
 
 def test_family_owned_commitment_has_no_owner_or_responsible_person(speaker) -> None:
@@ -77,12 +91,13 @@ def test_family_owned_commitment_has_no_owner_or_responsible_person(speaker) -> 
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.FAMILY, confidence=0.8),
+        scope_decision(Scope.FAMILY, confidence=0.8),
     )
 
     assert result.owner_id is None
     assert result.responsible_person_id is None
     assert result.confidence == 0.8
+    assert result.reason_code == OwnershipPolicy.REASON_FAMILY_UNASSIGNED
 
 
 def test_dependent_child_owner_has_no_responsible_person_without_evidence(
@@ -101,11 +116,12 @@ def test_dependent_child_owner_has_no_responsible_person_without_evidence(
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.DEPENDENT, confidence=0.9),
+        scope_decision(Scope.DEPENDENT, confidence=0.9),
     )
 
     assert result.owner_id == CHILD_MEMBER_ID
     assert result.responsible_person_id is None
+    assert result.reason_code == OwnershipPolicy.REASON_DEPENDENT_MEMBER
 
 
 def test_dependent_child_owner_with_explicit_parent_responsible(speaker) -> None:
@@ -123,7 +139,7 @@ def test_dependent_child_owner_with_explicit_parent_responsible(speaker) -> None
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.DEPENDENT, confidence=1.0),
+        scope_decision(Scope.DEPENDENT, confidence=1.0),
     )
 
     assert result.owner_id == CHILD_MEMBER_ID
@@ -143,8 +159,9 @@ def test_external_scope_leaves_owner_and_responsible_unassigned(speaker) -> None
 
     result = policy.evaluate(
         decision_input,
-        ScopeDecision(scope=Scope.EXTERNAL, confidence=0.9),
+        scope_decision(Scope.EXTERNAL, confidence=0.9),
     )
 
     assert result.owner_id is None
     assert result.responsible_person_id is None
+    assert result.reason_code == OwnershipPolicy.REASON_EXTERNAL_UNASSIGNED

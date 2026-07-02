@@ -8,9 +8,10 @@ involved, who owns it, and how widely it should be visible.
 from __future__ import annotations
 
 from enum import Enum
+from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.identity import IdentityResult
 
@@ -61,19 +62,41 @@ class ContextParticipant(BaseModel):
     relationship: Relationship
 
 
+class ContextConfidence(BaseModel):
+    """
+    Structured confidence for organizational context.
+
+    Identity and understanding measure input quality. Policy scores
+    measure organizational certainty. Overall reflects policy layer only.
+    """
+
+    model_config = ConfigDict(frozen=True)
+
+    identity: float = Field(ge=0.0, le=1.0)
+    understanding: float = Field(ge=0.0, le=1.0)
+    scope: float = Field(ge=0.0, le=1.0)
+    ownership: float = Field(ge=0.0, le=1.0)
+    follow_up: float = Field(ge=0.0, le=1.0)
+    overall: float = Field(ge=0.0, le=1.0)
+
+
 class ContextResult(BaseModel):
     """
     Structured context produced after understanding an incoming message.
 
-    Answers: who is speaking, who owns it, who else is involved, what
-    entities it relates to, and how visible it should be.
+    Immutable organizational snapshot for downstream planning.
     """
+
+    model_config = ConfigDict(frozen=True)
 
     speaker: IdentityResult
     owner_id: UUID | None = None
+    responsible_id: UUID | None = None
     scope: Scope
     participants: list[ContextParticipant] = Field(default_factory=list)
-    entities: list[str] = Field(default_factory=list)
+    related_entities: list[str] = Field(default_factory=list)
     visibility: Visibility
-    follow_up_required: bool = False
-    confidence: float = Field(ge=0.0, le=1.0)
+    follow_up_action: FollowUpAction = FollowUpAction.NONE
+    confidence: ContextConfidence
+    reason_codes: list[str] = Field(default_factory=list)
+    metadata: dict[str, Any] = Field(default_factory=dict)

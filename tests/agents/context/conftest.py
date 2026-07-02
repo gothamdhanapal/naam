@@ -1,4 +1,4 @@
-"""Shared fixtures for context decision tests."""
+"""Shared fixtures for Context Agent tests."""
 
 from __future__ import annotations
 
@@ -6,45 +6,14 @@ from uuid import UUID
 
 import pytest
 
-from app.context.models import (
-    DecisionInput,
-    FamilyMemberRef,
-    OwnershipDecision,
-    ScopeDecision,
-    UnderstandingContext,
-)
-from app.schemas.context import Scope
+from app.context.models import FamilyMemberRef
+from app.schemas.context_request import ContextRequest
 from app.schemas.identity import IdentityResult
+from app.schemas.understanding import UnderstandingResult
 from tests.conftest import MEMBER_ID
 
 OTHER_MEMBER_ID = UUID("990e8400-e29b-41d4-a716-446655440004")
 CHILD_MEMBER_ID = UUID("aa0e8400-e29b-41d4-a716-446655440005")
-
-
-def scope_decision(
-    scope: Scope,
-    confidence: float = 1.0,
-    reason_code: str = "SCOPE_EXPLICIT_HINT",
-) -> ScopeDecision:
-    return ScopeDecision(
-        scope=scope,
-        confidence=confidence,
-        reason_code=reason_code,
-    )
-
-
-def ownership_decision(
-    owner_id: UUID | None = None,
-    responsible_person_id: UUID | None = None,
-    confidence: float = 1.0,
-    reason_code: str = "OWNERSHIP_EXPLICIT",
-) -> OwnershipDecision:
-    return OwnershipDecision(
-        owner_id=owner_id,
-        responsible_person_id=responsible_person_id,
-        confidence=confidence,
-        reason_code=reason_code,
-    )
 
 
 @pytest.fixture
@@ -81,13 +50,16 @@ def family_members(spouse_member: FamilyMemberRef, child_member: FamilyMemberRef
     return [spouse_member, child_member]
 
 
-def build_input(
+def build_context_request(
     speaker: IdentityResult,
-    understanding: UnderstandingContext,
+    understanding: UnderstandingResult,
+    *,
     family_members: list[FamilyMemberRef] | None = None,
-) -> DecisionInput:
-    return DecisionInput(
-        speaker=speaker,
+    metadata: dict | None = None,
+) -> ContextRequest:
+    return ContextRequest(
+        identity=speaker,
         understanding=understanding,
         family_members=family_members or [],
+        metadata=metadata or {},
     )

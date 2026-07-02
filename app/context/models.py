@@ -1,8 +1,8 @@
 """
 Input and output models for the Context Decision Matrix.
 
-These models are internal to deterministic context reasoning. The future
-Context Agent will map `ContextDecision` outputs into `ContextResult`.
+These models are internal to deterministic context reasoning. The
+Context Agent maps `ContextDecision` outputs into `ContextResult`.
 """
 
 from __future__ import annotations
@@ -55,6 +55,7 @@ class ScopeDecision(BaseModel):
 
     scope: Scope
     confidence: float = Field(ge=0.0, le=1.0)
+    reason_code: str
 
 
 class OwnershipDecision(BaseModel):
@@ -63,6 +64,7 @@ class OwnershipDecision(BaseModel):
     owner_id: UUID | None = None
     responsible_person_id: UUID | None = None
     confidence: float = Field(ge=0.0, le=1.0)
+    reason_code: str
 
 
 class ParticipantDecision(BaseModel):
@@ -70,12 +72,14 @@ class ParticipantDecision(BaseModel):
 
     participants: list[ContextParticipant] = Field(default_factory=list)
     interested_member_ids: list[UUID] = Field(default_factory=list)
+    reason_code: str
 
 
 class VisibilityDecision(BaseModel):
     """Visibility determination for derived actions."""
 
     visibility: Visibility
+    reason_code: str
 
 
 class FollowUpDecision(BaseModel):
@@ -83,6 +87,7 @@ class FollowUpDecision(BaseModel):
 
     action: FollowUpAction
     confidence: float = Field(ge=0.0, le=1.0)
+    reason_code: str
 
 
 class ContextDecision(BaseModel):
@@ -93,3 +98,4 @@ class ContextDecision(BaseModel):
     participants: ParticipantDecision
     visibility: VisibilityDecision
     follow_up: FollowUpDecision
+    reason_codes: list[str] = Field(default_factory=list)
