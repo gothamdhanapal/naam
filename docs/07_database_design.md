@@ -81,6 +81,21 @@ Purpose
 
 Stores actionable work.
 
+Columns
+
+- id (uuid, primary key)
+- family_id (uuid, not null, foreign key → families)
+- title (text, not null)
+- description (text, nullable)
+- due_date (date, nullable)
+- priority (text, not null, default MEDIUM) — LOW, MEDIUM, HIGH
+- status (text, not null, default NEW) — NEW, ASSIGNED, IN_PROGRESS, COMPLETED, ARCHIVED
+- assigned_member_id (uuid, nullable, foreign key → family_members)
+- inbox_item_id (uuid, nullable, foreign key → inbox_items)
+- created_at (timestamptz, not null)
+- updated_at (timestamptz, not null)
+- deleted_at (timestamptz, nullable) — soft delete
+
 Relationships
 
 Created From

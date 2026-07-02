@@ -1,8 +1,7 @@
 """
 WhatsApp business logic.
 
-Receives incoming WhatsApp messages and ingests them into the inbox
-without triggering AI processing.
+Receives incoming WhatsApp messages and ingests them through InboxService.
 """
 
 from __future__ import annotations
@@ -19,11 +18,11 @@ from app.integrations.whatsapp.models import (
     WhatsAppIncomingMessage,
     WhatsAppWebhookPayload,
 )
-from app.schemas.inbox import InboxCreate
-from app.services.inbox_service import store_inbox as default_store_inbox
+from app.schemas.inbox import InboxCreate, InboxProcessResponse
+from app.services.inbox_service import InboxService, _default_inbox_service
 
 
-StoreInboxFn = Callable[[dict[str, Any]], Awaitable[dict[str, Any]]]
+IngestInboxFn = Callable[[dict[str, Any]], Awaitable[InboxProcessResponse]]
 
 logger = logging.getLogger(__name__)
 
@@ -33,14 +32,14 @@ class WhatsAppService:
     Orchestrates WhatsApp message ingestion.
 
     Converts incoming WhatsApp messages into inbox items via InboxService.
-    No AI processing occurs in this layer.
     """
 
     def __init__(
         self,
         client: WhatsAppClient,
         default_family_id: str,
-        store_inbox: StoreInboxFn | None = None,
+        inbox_service: InboxService | None = None,
+        ingest_inbox: IngestInboxFn | None = None,
     ) -> None:
         """
         Initialize the WhatsApp service.
@@ -48,12 +47,14 @@ class WhatsAppService:
         Args:
             client: WhatsApp Cloud API client.
             default_family_id: Family that receives ingested messages.
-            store_inbox: Inbox persistence callable. Defaults to
-                ``inbox_service.store_inbox`` when not provided.
+            inbox_service: Inbox domain service. Defaults to the application
+                InboxService when not provided.
+            ingest_inbox: Optional ingest callable override for tests.
         """
         self._client = client
         self._default_family_id = default_family_id
-        self._store_inbox = store_inbox or default_store_inbox
+        self._inbox_service = inbox_service or _default_inbox_service
+        self._ingest_inbox = ingest_inbox or self._inbox_service.ingest_inbox
 
     async def _safe_outbound_call(
         self,
@@ -117,7 +118,7 @@ class WhatsAppService:
             message: Parsed incoming WhatsApp message.
 
         Returns:
-            Ingestion result containing the stored inbox item.
+            Ingestion result including inbox item and processing output.
         """
         text = message.extract_text()
         if text is None:
@@ -129,7 +130,7 @@ class WhatsAppService:
             source_type="whatsapp",
         )
 
-        inbox_item = await self._store_inbox(inbox_create.model_dump())
+        ingestion = await self._ingest_inbox(inbox_create.model_dump())
 
         await self._safe_outbound_call(
             "mark_as_read",
@@ -139,5 +140,9 @@ class WhatsAppService:
 
         return WhatsAppIngestionResult(
             message_id=message.id,
-            inbox_item=inbox_item,
+            inbox_item=ingestion.inbox_item,
+            understanding=ingestion.understanding,
+            execution_plan=ingestion.execution_plan,
+            execution_results=ingestion.execution_results,
+            processing_error=ingestion.processing_error,
         )

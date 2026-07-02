@@ -2,7 +2,7 @@
 
 ## Version
 
-v1.0
+v1.1
 
 ---
 
@@ -30,7 +30,15 @@ Intake Agent
 
 ↓
 
+Identity Agent
+
+↓
+
 Understanding Agent
+
+↓
+
+Context Agent
 
 ↓
 
@@ -81,11 +89,50 @@ Responsibilities
 - Store incoming content
 - Detect input type
 - Create Inbox record
-- Trigger Understanding Agent
+- Trigger Identity Agent
 
 ---
 
-# 2. Understanding Agent
+# 2. Identity Agent
+
+Purpose
+
+Resolve who is speaking.
+
+Inputs
+
+- phone_number
+- family_id
+
+Outputs
+
+IdentityResult
+
+Example
+
+{
+"family_member_id":"...",
+"name":"Gowtham",
+"role":"parent",
+"phone_number":"15551234567",
+"confidence":1.0
+}
+
+Responsibilities
+
+- Look up sender in family_members
+- Normalize phone numbers for deterministic matching
+- Return unknown identity when no match exists
+
+Design
+
+- Deterministic only
+- No OpenAI
+- No database writes
+
+---
+
+# 3. Understanding Agent
 
 Purpose
 
@@ -117,7 +164,68 @@ Responsibilities
 
 ---
 
-# 3. Memory Agent
+# 4. Context Agent
+
+Purpose
+
+Explain what a conversation means for the family.
+
+Inputs
+
+- IdentityResult
+- Understanding output
+- Family context
+
+Outputs
+
+ContextResult
+
+Example
+
+{
+"speaker": {
+"family_member_id": "...",
+"name": "Gowtham",
+"role": "parent",
+"phone_number": "15551234567",
+"confidence": 1.0
+},
+"owner_id": "...",
+"scope": "FAMILY",
+"participants": [
+{
+"family_member_id": "...",
+"relationship": "OWNER"
+}
+],
+"entities": ["Home", "Electricity"],
+"visibility": "FAMILY",
+"follow_up_required": false,
+"confidence": 0.92
+}
+
+Responsibilities
+
+- Determine speaker context from identity
+- Identify owner and participants
+- Assign scope and visibility
+- Extract related entities
+- Flag when follow-up is required
+
+Schema
+
+- Scope — PERSONAL, FAMILY, DEPENDENT, EXTERNAL
+- Visibility — PRIVATE, FAMILY, CAREGIVERS, EXTERNAL
+- Relationship — OWNER, RESPONSIBLE, INTERESTED, PARTICIPANT, CAREGIVER
+
+Design
+
+- Structured output only in this milestone
+- Agent implementation follows in a later PR
+
+---
+
+# 5. Memory Agent
 
 Purpose
 
@@ -132,7 +240,7 @@ Responsibilities
 
 ---
 
-# 4. Planning Agent
+# 6. Planning Agent
 
 Purpose
 
@@ -164,7 +272,7 @@ Reminder
 
 ---
 
-# 5. Assignment Agent
+# 7. Assignment Agent
 
 Purpose
 
@@ -183,7 +291,7 @@ Assigned Family Member
 
 ---
 
-# 6. Reminder Agent
+# 8. Reminder Agent
 
 Purpose
 
@@ -199,7 +307,7 @@ Responsibilities
 
 ---
 
-# 7. Daily Digest Agent
+# 9. Daily Digest Agent
 
 Purpose
 
@@ -221,7 +329,7 @@ Upcoming Reminders
 
 ---
 
-# 8. Learning Agent
+# 10. Learning Agent
 
 Purpose
 

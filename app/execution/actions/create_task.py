@@ -7,6 +7,7 @@ delegates persistence to TaskService, and returns a structured ActionResult.
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 
 from pydantic import ValidationError
@@ -15,6 +16,8 @@ from app.execution.actions.base import BaseAction
 from app.execution.models import ActionResult, ActionType, ExecutionAction
 from app.schemas.task import TaskCreate
 from app.services.task_service import TaskService
+
+logger = logging.getLogger(__name__)
 
 
 class CreateTaskAction(BaseAction):
@@ -41,6 +44,11 @@ class CreateTaskAction(BaseAction):
             dependency errors are returned as failed results rather than
             raised as exceptions.
         """
+        logger.debug(
+            "[DEBUG task-creation] CreateTaskAction.execute start payload=%s",
+            action.payload,
+        )
+
         if action.type != ActionType.CREATE_TASK:
             return self._failure(
                 action_type=action.type,
@@ -62,9 +70,22 @@ class CreateTaskAction(BaseAction):
                 metadata={"validation_errors": exc.errors()},
             )
 
+        logger.debug(
+            "[DEBUG task-creation] TaskCreate.model_validate result=%s",
+            task_create.model_dump(mode="json"),
+        )
+
         try:
+            logger.debug(
+                "[DEBUG task-creation] before TaskService.create_task task=%s",
+                task_create.model_dump(mode="json"),
+            )
             created_task = task_service.create_task(task_create)
         except RuntimeError as exc:
+            logger.error(
+                "[DEBUG task-creation] CreateTaskAction caught RuntimeError: %s",
+                exc,
+            )
             return self._failure(
                 error=str(exc),
             )

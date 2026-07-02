@@ -10,8 +10,9 @@ from app.execution.actions.create_task import CreateTaskAction
 from app.execution.engine import ExecutionEngine
 from app.execution.models import ActionType
 from app.execution.registry import ActionRegistry
+from app.models.inbox import InboxStatus
 from app.schemas.understanding import UnderstandingResult
-from app.services.inbox_service import create_inbox
+from app.services.inbox_service import InboxService, ingest_inbox
 from app.services.processing_service import process_inbox_item
 from app.services.task_service import TaskService
 from tests.conftest import FAMILY_ID, INBOX_ID, sample_task
@@ -86,11 +87,13 @@ async def test_inbox_processing_flow_creates_task(
 
 
 @pytest.mark.asyncio
-@patch("app.services.inbox_service.process_inbox_item", new_callable=AsyncMock)
-@patch("app.services.inbox_service.create_inbox_item")
-async def test_inbox_request_returns_full_processing_response(
-    mock_create_inbox_item,
-    mock_process_inbox_item,
+@patch("app.services.inbox_service.inbox_repository.get_by_id")
+@patch("app.services.inbox_service.inbox_repository.update_status")
+@patch("app.services.inbox_service.inbox_repository.create")
+async def test_ingest_inbox_returns_full_processing_response(
+    mock_create,
+    mock_update_status,
+    mock_get_by_id,
     understanding_result: UnderstandingResult,
     sample_task,
 ) -> None:
@@ -99,49 +102,77 @@ async def test_inbox_request_returns_full_processing_response(
         "family_id": str(FAMILY_ID),
         "source_type": "text",
         "raw_content": "Pay the electricity bill tomorrow",
+        "status": InboxStatus.RECEIVED.value,
     }
-    mock_create_inbox_item.return_value = inbox_item
-    mock_process_inbox_item.return_value = {
-        "understanding": understanding_result.model_dump(),
-        "execution_plan": {
-            "actions": [
-                {
-                    "type": ActionType.CREATE_TASK.value,
-                    "payload": {
-                        "family_id": str(FAMILY_ID),
-                        "title": "Pay the electricity bill",
-                        "inbox_item_id": str(INBOX_ID),
-                    },
-                }
-            ]
-        },
-        "execution_results": [
-            {
-                "success": True,
-                "action_type": ActionType.CREATE_TASK.value,
-                "resource_type": "task",
-                "resource_id": str(sample_task.id),
-                "message": "Task created successfully",
-                "error": None,
-                "metadata": {},
-            }
-        ],
-    }
+    processed_item = {**inbox_item, "status": InboxStatus.PROCESSED.value}
+    mock_create.return_value = inbox_item
+    mock_get_by_id.return_value = processed_item
 
-    response = await create_inbox(
+    process_mock = AsyncMock(
+        return_value={
+            "understanding": understanding_result.model_dump(),
+            "execution_plan": {
+                "actions": [
+                    {
+                        "type": ActionType.CREATE_TASK.value,
+                        "payload": {
+                            "family_id": str(FAMILY_ID),
+                            "title": "Pay the electricity bill",
+                            "inbox_item_id": str(INBOX_ID),
+                        },
+                    }
+                ]
+            },
+            "execution_results": [
+                {
+                    "success": True,
+                    "action_type": ActionType.CREATE_TASK.value,
+                    "resource_type": "task",
+                    "resource_id": str(sample_task.id),
+                    "message": "Task created successfully",
+                    "error": None,
+                    "metadata": {},
+                }
+            ],
+        }
+    )
+    service = InboxService(process_inbox_item_fn=process_mock)
+
+    response = await service.ingest_inbox(
         {
             "family_id": str(FAMILY_ID),
             "raw_content": "Pay the electricity bill tomorrow",
         }
     )
 
-    mock_create_inbox_item.assert_called_once()
-    mock_process_inbox_item.assert_awaited_once_with(
+    mock_create.assert_called_once()
+    mock_update_status.assert_called_once_with(
+        str(INBOX_ID),
+        InboxStatus.PROCESSING,
+    )
+    process_mock.assert_awaited_once_with(
         inbox_id=str(INBOX_ID),
         family_id=str(FAMILY_ID),
         content="Pay the electricity bill tomorrow",
     )
-    assert response.inbox_item == inbox_item
+    assert response.inbox_item == processed_item
     assert response.understanding["type"] == "TASK"
     assert len(response.execution_plan["actions"]) == 1
     assert response.execution_results[0]["success"] is True
+
+
+@pytest.mark.asyncio
+@patch("app.services.inbox_service._default_inbox_service.ingest_inbox", new_callable=AsyncMock)
+async def test_ingest_inbox_module_helper_delegates_to_service(
+    mock_ingest_inbox,
+) -> None:
+    mock_ingest_inbox.return_value = MagicMock()
+
+    payload = {
+        "family_id": str(FAMILY_ID),
+        "raw_content": "Pay the electricity bill tomorrow",
+    }
+
+    await ingest_inbox(payload)
+
+    mock_ingest_inbox.assert_awaited_once_with(payload)

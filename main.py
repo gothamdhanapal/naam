@@ -4,7 +4,7 @@ from app.agents.understanding_agent import understand_message
 from app.core.supabase import supabase
 from app.integrations.whatsapp.webhook import router as whatsapp_webhook_router
 from app.schemas.inbox import InboxCreate, InboxProcessResponse
-from app.services.inbox_service import create_inbox
+from app.services.inbox_service import ingest_inbox
 
 app = FastAPI(
     title="Naam API"
@@ -34,7 +34,7 @@ def get_families():
 
 @app.post("/inbox", response_model=InboxProcessResponse)
 async def create_inbox_item(payload: InboxCreate):
-    return await create_inbox(payload.model_dump())
+    return await ingest_inbox(payload.model_dump())
 
 
 @app.get("/test-ai")

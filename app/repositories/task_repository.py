@@ -23,6 +23,7 @@ Expected ``tasks`` table columns:
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timezone
 from typing import Any
 from uuid import UUID
@@ -32,6 +33,8 @@ from supabase import Client
 from app.core.supabase import supabase
 from app.models.task import Task
 from app.schemas.task import TaskCreate, TaskUpdate
+
+logger = logging.getLogger(__name__)
 
 
 class TaskRepository:
@@ -74,16 +77,33 @@ class TaskRepository:
             "updated_at": now,
         }
 
-        response = (
-            self._client.table(self._TABLE)
-            .insert(payload)
-            .execute()
+        logger.debug(
+            "[DEBUG task-creation] TaskRepository.create insert payload=%s",
+            payload,
         )
 
-        if not response.data:
-            raise RuntimeError("Failed to create task: empty response from Supabase.")
+        try:
+            response = (
+                self._client.table(self._TABLE)
+                .insert(payload)
+                .execute()
+            )
+            logger.debug(
+                "[DEBUG task-creation] TaskRepository.create Supabase response=%r",
+                response,
+            )
 
-        return Task.from_row(response.data[0])
+            if not response.data:
+                raise RuntimeError(
+                    "Failed to create task: empty response from Supabase."
+                )
+
+            return Task.from_row(response.data[0])
+        except Exception:
+            logger.exception(
+                "[DEBUG task-creation] TaskRepository.create failed"
+            )
+            raise
 
     def get_by_id(self, task_id: UUID) -> Task | None:
         """

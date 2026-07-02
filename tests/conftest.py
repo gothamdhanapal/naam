@@ -15,6 +15,7 @@ from app.models.task import Task, TaskPriority, TaskStatus
 FAMILY_ID = UUID("550e8400-e29b-41d4-a716-446655440000")
 TASK_ID = UUID("660e8400-e29b-41d4-a716-446655440001")
 INBOX_ID = UUID("770e8400-e29b-41d4-a716-446655440002")
+MEMBER_ID = UUID("880e8400-e29b-41d4-a716-446655440003")
 NOW = datetime(2026, 6, 28, 12, 0, 0, tzinfo=timezone.utc)
 
 
