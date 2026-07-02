@@ -10,6 +10,7 @@ from pydantic import ValidationError
 from app.schemas.context import (
     ContextParticipant,
     ContextResult,
+    FollowUpAction,
     Relationship,
     Scope,
     Visibility,
@@ -67,10 +68,20 @@ class TestScope:
 
 class TestVisibility:
     def test_contains_expected_values(self) -> None:
+        assert Visibility.OWNER_ONLY.value == "OWNER_ONLY"
         assert Visibility.PRIVATE.value == "PRIVATE"
         assert Visibility.FAMILY.value == "FAMILY"
         assert Visibility.CAREGIVERS.value == "CAREGIVERS"
         assert Visibility.EXTERNAL.value == "EXTERNAL"
+
+
+class TestFollowUpAction:
+    def test_contains_expected_values(self) -> None:
+        assert FollowUpAction.NONE.value == "NONE"
+        assert FollowUpAction.REMIND_OWNER.value == "REMIND_OWNER"
+        assert FollowUpAction.WAIT_RESPONSE.value == "WAIT_RESPONSE"
+        assert FollowUpAction.WATCH.value == "WATCH"
+        assert FollowUpAction.ESCALATE.value == "ESCALATE"
 
 
 class TestRelationship:

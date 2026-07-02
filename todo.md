@@ -4,7 +4,6 @@ See `docs/16_current_focus.md` for session handover and `docs/03_project_status.
 
 ## M4 Remaining Work
 
-- [ ] PR3 — Context Decision Matrix (deterministic rules for scope, visibility, ownership)
 - [ ] PR4 — Context Agent (produce `ContextResult` from identity + understanding)
 - [ ] PR5 — Planning Agent v2 (consume context in planning)
 - [ ] Wire Identity Agent into inbox processing pipeline
@@ -14,6 +13,7 @@ See `docs/16_current_focus.md` for session handover and `docs/03_project_status.
 
 - [x] PR1 — Identity Agent
 - [x] PR2 — Context Models
+- [x] PR3 — Context Decision Matrix
 
 ## Post-M4
 
